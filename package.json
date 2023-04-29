@@ -1,0 +1,22 @@
+{
+  "name": "modellbahn-displays-traincontroller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webfraggle/modellbahn-displays-traincontroller.git"
+  },
+  "author": "",
+  "license": "Proprietary",
+  "bugs": {
+    "url": "https://github.com/webfraggle/modellbahn-displays-traincontroller/issues"
+  },
+  "homepage": "https://github.com/webfraggle/modellbahn-displays-traincontroller#readme",
+  "dependencies": {
+    "minimist": "^1.2.8"
+  }
+}
