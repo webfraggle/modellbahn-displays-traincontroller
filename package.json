@@ -1,8 +1,9 @@
 {
-  "name": "modellbahn-displays-traincontroller",
+  "name": "mbd-tc",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin":"index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,5 +19,13 @@
   "homepage": "https://github.com/webfraggle/modellbahn-displays-traincontroller#readme",
   "dependencies": {
     "minimist": "^1.2.8"
+  }
+
+  ,
+  "pkg": {
+    "targets": [ "node18-win-arm64", "node18-macos-arm64" ],
+    "outputPath": "dist",
+    "name": "mdb-tc"
+    
   }
 }
