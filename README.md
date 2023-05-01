@@ -1,4 +1,4 @@
-# modellbahn-displays-traincontroller
+# Modellbahn Displays - TrainController Anbindung
 
     npm install
 
