@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "bin": "index.js",
+  "bin": "./build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "ncc build index.js -o build && pkg ./build/index.js -t node18-win-arm64,node18-macos-arm64 -o ./dist/mbd-tc"
   },
   "repository": {
     "type": "git",
