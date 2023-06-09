@@ -1,5 +1,11 @@
 # Modellbahn Displays - TrainController Anbindung
 ## How to use
+Go to config folder and edit default.json.
+Enter your display's IP-Adresse
+
+    {
+    "endpoint":"http://192.168.178.155"
+    }
 ### Option 1: setTime
 Manage all your trains with the webinterface of your "Zugzielanzeiger" and the set the time via command-line / external program with this tool. 
     
@@ -8,6 +14,16 @@ Manage all your trains with the webinterface of your "Zugzielanzeiger" and the s
  
     
     mbd-tc-win.exe --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"
+
+### Use of more displays
+Create a copy of the default json. Rename to your display's name, e.g. "gleis1.json". Use the command-line option --conf to load this new config.
+
+    mbd-tc-win.exe --conf gleis1 --setTime "12:30"
+
+### how to use a double track display
+Use the path parameter with "GleisA" or "GleisB".
+
+    mbd-tc-win.exe --path GleisB --setTime "12:30"
 
 ## How to develop.
 Please use nvm to switch to node version 18.16

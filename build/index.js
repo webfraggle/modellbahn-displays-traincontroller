@@ -10461,7 +10461,7 @@ if (argv['gleis'])
 {
     if (argv['gleis'].slice(-1).toLowerCase() == "b")
     {
-        path = "GleisA"
+        path = "GleisB"
     } else {
         path = "GleisA"
     }
