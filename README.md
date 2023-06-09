@@ -21,9 +21,9 @@ Create a copy of the default json. Rename to your display's name, e.g. "gleis1.j
     mbd-tc-win.exe --conf gleis1 --setTime "12:30"
 
 ### how to use a double track display
-Use the path parameter with "GleisA" or "GleisB".
+Use the "gleis" parameter with "GleisA" or "GleisB".
 
-    mbd-tc-win.exe --path GleisB --setTime "12:30"
+    mbd-tc-win.exe --gleis GleisB --setTime "12:30"
 
 ## How to develop.
 Please use nvm to switch to node version 18.16
