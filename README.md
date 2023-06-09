@@ -11,6 +11,7 @@ Manage all your trains with the webinterface of your "Zugzielanzeiger" and the s
     
     mbd-tc-win.exe --setTime "12:30"
 ### Option 2: set train infos directly
+Use option setTrain1 to setTrain3 to set all the infos directly. You can use one ore more at a time. The value is a pipe separted string. With the following schema: "TrainID|Time|Destination|Via|Delay|Special info"
  
     
     mbd-tc-win.exe --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"

@@ -57,18 +57,20 @@ if (argv['setTime'])
 
 // node index.js --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"
 
+var trains = []; 
+
 // --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline"
 if (argv['setTrain1'])
 {
     trainString = argv['setTrain1'];
-    setTrain(1, trainString);
+    trains.push(getTrainObject(1, trainString));
 }
 
 // --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL"
 if (argv['setTrain2'])
 {
     trainString = argv['setTrain2'];
-    setTrain(2, trainString);
+    trains.push(getTrainObject(2, trainString));
 }
 
 
@@ -76,10 +78,10 @@ if (argv['setTrain2'])
 if (argv['setTrain3'])
 {
     trainString = argv['setTrain3'];
-    setTrain(3, trainString);
+    trains.push(getTrainObject(3, trainString));
 }
 
-function setTrain(nr, trainString)
+function getTrainObject(nr, trainString)
 {
     outJson = {
         "vonnach": "",
@@ -101,18 +103,34 @@ function setTrain(nr, trainString)
     outJson.abw = trainInfos[4];
     outJson.hinweis = trainInfos[5];
 
-    // console.log(outJson);
+    return {
+        url:endpoint+'/zug'+nr,
+        train: outJson
+    }
 
-    axios.post(endpoint+'/zug'+nr, outJson)
-    .then(function (response) {
-        console.log('SUCCESS',response.data);
-        process.exit(0);
-        return;
-    })
-    .catch(function (error) {
-        console.error('ERROR',error);
-        process.exit(1);
-        return;
-        // console.log('ERROR',error.response.status, error.response.data);
-    });
+}
+
+console.log(trains);
+if (trains.length)
+{
+    setTrains(trains);
+}
+function setTrains(trains)
+{
+    for (let i = 0; i < trains.length; i++) {
+        const train = trains[i];
+        axios.post(train.url, train.train)
+        .then(function (response) {
+            console.log('SUCCESS',response.data);
+            // process.exit(0);
+            // return;
+        })
+        .catch(function (error) {
+            console.error('ERROR',error);
+            // process.exit(1);
+            // return;
+            // console.log('ERROR',error.response.status, error.response.data);
+        });
+        
+    }
 }
