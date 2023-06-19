@@ -10443,6 +10443,24 @@ var __webpack_exports__ = {};
 (() => {
 const axios = __nccwpck_require__(594);
 
+
+// reroute console.log to file
+var fs = __nccwpck_require__(7147);
+var util = __nccwpck_require__(3837);
+var log_file = fs.createWriteStream('./debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
+
+console.log = function() { //
+    for (var i=0, numArgs = arguments.length; i<numArgs; i++){
+        log_file.write(util.format(arguments[i]) + ' ');
+        log_stdout.write(util.format(arguments[i]) + ' ');
+    }
+    log_file.write('\n');
+    log_stdout.write('\n');
+};
+console.error = console.log;
+
+
 // first read arguments
 var argv = __nccwpck_require__(1354)(process.argv.slice(2));
 // console.log(argv);
@@ -10483,15 +10501,17 @@ if (argv['setTime'])
         process.exit(1);
         return;
     }
-    axios.postForm(endpoint+'/setTime', {
+    var obj = {
         path: path,
         time: timeString
-    })
+    };
+    console.log("setTime obj:", obj);
+    axios.postForm(endpoint+'/setTime', obj)
     .then(function (response) {
         console.log('SUCCESS',response.data);
     })
     .catch(function (error) {
-        console.error('ERROR',error);
+        console.error('ERROR',error.toString());
         process.exit(1);
         return;
         // console.log('ERROR',error.response.status, error.response.data);
@@ -10553,7 +10573,7 @@ function getTrainObject(nr, trainString)
 
 }
 
-console.log(trains);
+console.log("Trains", trains);
 if (trains.length)
 {
     setTrains(trains);
