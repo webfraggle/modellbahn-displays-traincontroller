@@ -10447,23 +10447,44 @@ const axios = __nccwpck_require__(594);
 // reroute console.log to file
 var fs = __nccwpck_require__(7147);
 var util = __nccwpck_require__(3837);
-var log_file = fs.createWriteStream('./debug.log', {flags : 'w'});
-var log_stdout = process.stdout;
+// var log_file = fs.createWriteStream('./debug.log', {flags : 'w'});
+// var log_stdout = process.stdout;
 
-console.log = function() { //
-    for (var i=0, numArgs = arguments.length; i<numArgs; i++){
-        log_file.write(util.format(arguments[i]) + ' ');
-        log_stdout.write(util.format(arguments[i]) + ' ');
-    }
-    log_file.write('\n');
-    log_stdout.write('\n');
-};
-console.error = console.log;
+// console.log = function() { //
+//     for (var i=0, numArgs = arguments.length; i<numArgs; i++){
+//         log_file.write(util.format(arguments[i]) + ' ');
+//         log_stdout.write(util.format(arguments[i]) + ' ');
+//     }
+//     log_file.write('\n');
+//     log_stdout.write('\n');
+// };
+// console.error = console.log;
 
 
 // first read arguments
 var argv = __nccwpck_require__(1354)(process.argv.slice(2));
-// console.log(argv);
+console.log(argv);
+console.log('execPath: ', process.execPath);
+console.log('report: ', process.report);
+console.log('report.filename: ', process.report.filename);
+console.log('report.directory: ', process.report.directory);
+
+if (process.execPath.endsWith("x64.exe"))
+{
+    newDir = process.execPath.substring(0, process.execPath.lastIndexOf('\\'));
+    console.log('Starting directory: ' + process.cwd());
+    try {
+        process.chdir(newDir);
+        console.log('New directory: ' + process.cwd());
+      }
+      catch (err) {
+        console.log('chdir: ' + err);
+      }
+
+}
+
+
+
 
 // second read config
 
@@ -10597,6 +10618,8 @@ function setTrains(trains)
         
     }
 }
+
+
 })();
 
 module.exports = __webpack_exports__;
