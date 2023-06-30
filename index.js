@@ -25,7 +25,7 @@ var argv = require('minimist')(process.argv.slice(2));
 // console.log('report.filename: ', process.report.filename);
 // console.log('report.directory: ', process.report.directory);
 
-if (process.execPath.endsWith("tc.exe"))
+if (process.execPath.endsWith("tc.exe") || process.execPath.endsWith("tc-hidden.exe"))
 {
     newDir = process.execPath.substring(0, process.execPath.lastIndexOf('\\'));
     console.log('Starting directory: ' + process.cwd());
@@ -68,12 +68,29 @@ console.log("Endpoint:", endpoint, "path:", path);
 
 if (argv['next'])
 {
-    url = endpoint+'/next?path='+path;
-    console.log('skip next, url:',url,axios,"wer§");
+    url = endpoint+'/skipNext?path='+path;
+    console.log('skip next, url:',url);
     axios
     .get(url)
     .then(function (response) {
-        console.log('SUCCESS',response);
+        console.log('SUCCESS');
+        process.exit(0);
+    })
+    .catch(function (error) {
+        console.error('ERROR',error.toString());
+        process.exit(1);
+        return;
+        // console.log('ERROR',error.response.status, error.response.data);
+    });
+}
+if (argv['prev'])
+{
+    url = endpoint+'/skipPrev?path='+path;
+    console.log('skip prev, url:',url);
+    axios
+    .get(url)
+    .then(function (response) {
+        console.log('SUCCESS');
         process.exit(0);
     })
     .catch(function (error) {

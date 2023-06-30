@@ -11282,13 +11282,10 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 const axios = __nccwpck_require__(3205);
-// hide window
-// const ConsoleWindow = require("node-hide-console-window");
-// ConsoleWindow.hideConsole();
 
 // reroute console.log to file
-var fs = __nccwpck_require__(7147);
-var util = __nccwpck_require__(3837);
+// var fs = require('fs');
+// var util = require('util');
 // var log_file = fs.createWriteStream('./debug.log', {flags : 'w'});
 // var log_stdout = process.stdout;
 
@@ -11311,7 +11308,7 @@ var argv = __nccwpck_require__(3906)(process.argv.slice(2));
 // console.log('report.filename: ', process.report.filename);
 // console.log('report.directory: ', process.report.directory);
 
-if (process.execPath.endsWith("tc.exe"))
+if (process.execPath.endsWith("tc.exe") || process.execPath.endsWith("tc-hidden.exe"))
 {
     newDir = process.execPath.substring(0, process.execPath.lastIndexOf('\\'));
     console.log('Starting directory: ' + process.cwd());
@@ -11352,6 +11349,40 @@ if (argv['gleis'])
 
 console.log("Endpoint:", endpoint, "path:", path);
 
+if (argv['next'])
+{
+    url = endpoint+'/skipNext?path='+path;
+    console.log('skip next, url:',url);
+    axios
+    .get(url)
+    .then(function (response) {
+        console.log('SUCCESS');
+        process.exit(0);
+    })
+    .catch(function (error) {
+        console.error('ERROR',error.toString());
+        process.exit(1);
+        return;
+        // console.log('ERROR',error.response.status, error.response.data);
+    });
+}
+if (argv['prev'])
+{
+    url = endpoint+'/skipPrev?path='+path;
+    console.log('skip prev, url:',url);
+    axios
+    .get(url)
+    .then(function (response) {
+        console.log('SUCCESS');
+        process.exit(0);
+    })
+    .catch(function (error) {
+        console.error('ERROR',error.toString());
+        process.exit(1);
+        return;
+        // console.log('ERROR',error.response.status, error.response.data);
+    });
+}
 
 // node index.js --setTime "12:30"
 if (argv['setTime'])
@@ -11372,6 +11403,7 @@ if (argv['setTime'])
     axios.postForm(endpoint+'/setTime', obj)
     .then(function (response) {
         console.log('SUCCESS',response.data);
+        process.exit(0);
     })
     .catch(function (error) {
         console.error('ERROR',error.toString());
