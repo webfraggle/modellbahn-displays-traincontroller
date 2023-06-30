@@ -19,12 +19,16 @@ Use option setTrain1 to setTrain3 to set all the infos directly. You can use one
 ### Use of more displays
 Create a copy of the default json. Rename to your display's name, e.g. "gleis1.json". Use the command-line option --conf to load this new config.
 
-    mbd-tc-win.exe --conf gleis1 --setTime "12:30"
+    mbd-tc.exe --conf gleis1 --setTime "12:30"
 
 ### how to use a double track display
 Use the "gleis" parameter with "GleisA" or "GleisB".
 
-    mbd-tc-win.exe --gleis GleisB --setTime "12:30"
+    mbd-tc.exe --gleis GleisB --setTime "12:30"
+
+## How to debug in TrainController
+Use debug.bat. Change path to your folder and use the debug.bat instead of the mbd-tc.exe. 
+This bat-file opens an extra notepad, this prevents the terminal to close and you can read the log messages.
 
 ## How to develop.
 Please use nvm to switch to node version 18.16
@@ -49,3 +53,7 @@ Then you can build it with this command
 or 
     
     npm run build
+
+To prevent showing up a command prompt window, use PE Tools to change Subsystem from 3 to 2.
+Explanation here:
+https://stackoverflow.com/questions/22653010/prevent-console-window-from-being-created-in-custom-node-js-build

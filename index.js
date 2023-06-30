@@ -1,6 +1,5 @@
 const axios = require('axios');
 
-
 // reroute console.log to file
 var fs = require('fs');
 var util = require('util');
@@ -20,13 +19,13 @@ var util = require('util');
 
 // first read arguments
 var argv = require('minimist')(process.argv.slice(2));
-console.log(argv);
-console.log('execPath: ', process.execPath);
-console.log('report: ', process.report);
-console.log('report.filename: ', process.report.filename);
-console.log('report.directory: ', process.report.directory);
+// console.log(argv);
+// console.log('execPath: ', process.execPath);
+// console.log('report: ', process.report);
+// console.log('report.filename: ', process.report.filename);
+// console.log('report.directory: ', process.report.directory);
 
-if (process.execPath.endsWith("x64.exe"))
+if (process.execPath.endsWith("tc.exe"))
 {
     newDir = process.execPath.substring(0, process.execPath.lastIndexOf('\\'));
     console.log('Starting directory: ' + process.cwd());
@@ -67,6 +66,24 @@ if (argv['gleis'])
 
 console.log("Endpoint:", endpoint, "path:", path);
 
+if (argv['next'])
+{
+    url = endpoint+'/next?path='+path;
+    console.log('skip next, url:',url);
+    axios
+    .get(url)
+    .then(function (response) {
+        console.log('SUCCESS',response);
+    })
+    .catch(function (error) {
+        console.error('ERROR',error.toString());
+        process.exit(1);
+        return;
+        // console.log('ERROR',error.response.status, error.response.data);
+    });
+
+    process.exit(0);
+}
 
 // node index.js --setTime "12:30"
 if (argv['setTime'])
@@ -94,6 +111,7 @@ if (argv['setTime'])
         return;
         // console.log('ERROR',error.response.status, error.response.data);
     });
+    process.exit(0);
 }
 
 // node index.js --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"
