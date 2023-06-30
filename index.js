@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 // reroute console.log to file
-var fs = require('fs');
-var util = require('util');
+// var fs = require('fs');
+// var util = require('util');
 // var log_file = fs.createWriteStream('./debug.log', {flags : 'w'});
 // var log_stdout = process.stdout;
 
@@ -69,11 +69,12 @@ console.log("Endpoint:", endpoint, "path:", path);
 if (argv['next'])
 {
     url = endpoint+'/next?path='+path;
-    console.log('skip next, url:',url);
+    console.log('skip next, url:',url,axios,"wer§");
     axios
     .get(url)
     .then(function (response) {
         console.log('SUCCESS',response);
+        process.exit(0);
     })
     .catch(function (error) {
         console.error('ERROR',error.toString());
@@ -81,8 +82,6 @@ if (argv['next'])
         return;
         // console.log('ERROR',error.response.status, error.response.data);
     });
-
-    process.exit(0);
 }
 
 // node index.js --setTime "12:30"
@@ -104,6 +103,7 @@ if (argv['setTime'])
     axios.postForm(endpoint+'/setTime', obj)
     .then(function (response) {
         console.log('SUCCESS',response.data);
+        process.exit(0);
     })
     .catch(function (error) {
         console.error('ERROR',error.toString());
@@ -111,7 +111,6 @@ if (argv['setTime'])
         return;
         // console.log('ERROR',error.response.status, error.response.data);
     });
-    process.exit(0);
 }
 
 // node index.js --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"
