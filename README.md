@@ -8,7 +8,7 @@ Enter your display's IP-Adresse
     }
 
 ### Option 1: Skip next and prev
-Manage all your trains with the webinterface of your "Zugzielanzeiger" and the skip next or previous train via command-line / external program with this tool. 
+Manage all your trains with the webinterface of your "Zugzielanzeiger" and then skip to next or previous train via command-line / external program with this tool. 
     
     mbd-tc.exe --next
     mbd-tc.exe --prev
@@ -32,6 +32,9 @@ Create a copy of the default json. Rename to your display's name, e.g. "gleis1.j
 Use the "gleis" parameter with "A" or "B".
 
     mbd-tc.exe --gleis B --setTime "12:30"
+
+## How to prevent the popup of a command line window
+Use the mbd-tc-hidden.exe file instead of mbd-tc.exe
 
 ## How to debug in TrainController
 Use debug.bat. Change path to your folder and use the debug.bat instead of the mbd-tc.exe. 
