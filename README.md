@@ -1,4 +1,52 @@
 # Modellbahn Displays - TrainController Anbindung
+
+(English version below)
+## Konfiguration
+Gehen Sie zum Konfigurationsordner und bearbeiten Sie default.json. Geben
+Sie die IP-Adresse Ihres Displays ein:
+
+    {
+    „Endpunkt“: „http://192.168.178.155“
+    }
+
+### Option 1: Zu nächsten und vorherigen Zugziel springen:
+Verwalten Sie alle Ihre Züge über die Weboberfläche Ihres
+Zugzielanzeigers und springen Sie dann per Kommandozeile / externem Programm zum nächsten oder vorherigen Zug.
+
+    mbd-tc.exe --next
+    mbd-tc.exe --prev
+### Option 2: Aufruf der Anzeigen vom Webinterface über externes Programm (z.B.TC):
+Verwalten Sie alle Ihre Züge über das Webinterface Ihres Zugzielanzeigers und stellen Sie die Uhrzeit per Kommandozeile / externem Programm ein.
+
+    mbd-tc.exe --setTime "12:30"
+### Option 3: Zuginformationen direkt in externem Programm (z.B. TC) einstellen:
+Verwenden Sie die Optionen setTrain1 bis setTrain3, um alle Informationen direkt festzulegen. Sie können einen oder mehrere gleichzeitig verwenden.
+Der Wert ist eine durch 5 Pipes getrennte Zeichenfolge mit folgendem Schema:
+
+„TrainID|Time|Destination|Via|Delay|Special info“
+
+    mbd-tc.exe --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"
+
+### Einsatz mehrerer Displays:
+Erstellen Sie eine Kopie des Standard-JSON. Benennen Sie es in den Namen Ihres Displays um, z. B. „gleis1.json“. Verwenden Sie die Befehlszeilenoption --conf, um diese neue Konfiguration zu laden:
+
+    mbd-tc.exe --conf gleis1 --setTime "12:30"
+    
+### Wie man eine Doppelspuranzeige verwendet:
+Verwenden Sie den Parameter „gleis“ mit „A“ oder „B“.
+
+    mbd-tc.exe --gleis B --setTime "12:30"
+
+### Ein leeres Display anzeigen (Doppelspuranzeige):
+    mbd-tc.exe –-gleis B --setTrain1 "|||||"
+
+### So verhindern Sie das Popup eines Befehlszeilenfensters:
+Verwenden Sie die Datei **mbd-tc-hidden.exe** anstelle von mbd-tc.exe
+
+### So debuggen Sie in TrainController:
+Verwenden Sie debug.bat. Ändern Sie den Pfad zu Ihrem Ordner und verwenden Sie debug.bat anstelle von mbd-tc.exe. Diese Bat-Datei öffnet einen zusätzlichen Texteditor, der verhindert, dass das Terminal geschlossen wird und Sie die Protokollmeldungen lesen können.
+
+# English Version
 ## How to use
 Go to config folder and edit default.json.
 Enter your display's IP-Adresse
@@ -40,7 +88,7 @@ Use the mbd-tc-hidden.exe file instead of mbd-tc.exe
 Use debug.bat. Change path to your folder and use the debug.bat instead of the mbd-tc.exe. 
 This bat-file opens an extra notepad, this prevents the terminal to close and you can read the log messages.
 
-## How to develop.
+# How to develop.
 Please use nvm to switch to node version 18.16
     
     nvm use 18.16
