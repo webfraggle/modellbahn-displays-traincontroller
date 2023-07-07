@@ -6,7 +6,7 @@ Gehen Sie zum Konfigurationsordner und bearbeiten Sie default.json. Geben
 Sie die IP-Adresse Ihres Displays ein:
 
     {
-    „Endpunkt“: „http://192.168.178.155“
+    "endpoint":"http://192.168.178.155"
     }
 
 ### Option 1: Zu nächsten und vorherigen Zugziel springen:
