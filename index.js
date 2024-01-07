@@ -19,11 +19,11 @@ console.error = console.log;
 
 // first read arguments
 var argv = require('minimist')(process.argv.slice(2));
-console.log(argv);
-console.log('execPath: ', process.execPath);
-console.log('report: ', process.report);
-console.log('report.filename: ', process.report.filename);
-console.log('report.directory: ', process.report.directory);
+// console.log(argv);
+// console.log('execPath: ', process.execPath);
+// console.log('report: ', process.report);
+// console.log('report.filename: ', process.report.filename);
+// console.log('report.directory: ', process.report.directory);
 
 if (process.execPath.endsWith("tc.exe") || process.execPath.endsWith("tc-hidden.exe"))
 {
@@ -187,10 +187,10 @@ function getTrainObject(nr, trainString)
     trainInfos = trainString.split("|");
     outJson.nr = trainInfos[0];
     outJson.zeit = trainInfos[1];
-    outJson.vonnach = trainInfos[2];
-    outJson.via = trainInfos[3];
+    outJson.vonnach = repairUTF8(trainInfos[2]);
+    outJson.via = repairUTF8(trainInfos[3]);
     outJson.abw = trainInfos[4];
-    outJson.hinweis = trainInfos[5];
+    outJson.hinweis = repairUTF8(trainInfos[5]);
 
     return {
         url:endpoint+'/zug'+nr,
@@ -225,5 +225,41 @@ function setTrains(trains)
         });
         
     }
+}
+
+
+// Functions
+
+function repairUTF8(input) {
+    const REPLACEMENTS = {
+        "â‚¬": "€", "â€š": "‚", "â€ž": "„", "â€¦": "…", "Ë†": "ˆ",
+        "â€¹": "‹", "â€˜": "‘", "â€™": "’", "â€œ": "“", "â€": "”",
+        "â€¢": "•", "â€“": "–", "â€”": "—", "Ëœ": "˜", "â„¢": "™",
+        "â€º": "›", "Å“": "œ", "Å’": "Œ", "Å¾": "ž", "Å¸": "Ÿ",
+        "Å¡": "š", "Å½": "Ž", "Â¡": "¡", "Â¢": "¢", "Â£": "£",
+        "Â¤": "¤", "Â¥": "¥", "Â¦": "¦", "Â§": "§", "Â¨": "¨",
+        "Â©": "©", "Âª": "ª", "Â«": "«", "Â¬": "¬", "Â®": "®",
+        "Â¯": "¯", "Â°": "°", "Â±": "±", "Â²": "²", "Â³": "³",
+        "Â´": "´", "Âµ": "µ", "Â¶": "¶", "Â·": "·", "Â¸": "¸",
+        "Â¹": "¹", "Âº": "º", "Â»": "»", "Â¼": "¼", "Â½": "½",
+        "Â¾": "¾", "Â¿": "¿", "Ã€": "À", "Ã‚": "Â", "Ãƒ": "Ã",
+        "Ã„": "Ä", "Ã…": "Å", "Ã†": "Æ", "Ã‡": "Ç", "Ãˆ": "È",
+        "Ã‰": "É", "ÃŠ": "Ê", "Ã‹": "Ë", "ÃŒ": "Ì", "ÃŽ": "Î",
+        "Ã‘": "Ñ", "Ã’": "Ò", "Ã“": "Ó", "Ã”": "Ô", "Ã•": "Õ",
+        "Ã–": "Ö", "Ã—": "×", "Ã˜": "Ø", "Ã™": "Ù", "Ãš": "Ú",
+        "Ã›": "Û", "Ãœ": "Ü", "Ãž": "Þ", "ÃŸ": "ß", "Ã¡": "á",
+        "Ã¢": "â", "Ã£": "ã", "Ã¤": "ä", "Ã¥": "å", "Ã¦": "æ",
+        "Ã§": "ç", "Ã¨": "è", "Ã©": "é", "Ãª": "ê", "Ã«": "ë",
+        "Ã¬": "ì", "Ã­": "í", "Ã®": "î", "Ã¯": "ï", "Ã°": "ð",
+        "Ã±": "ñ", "Ã²": "ò", "Ã³": "ó", "Ã´": "ô", "Ãµ": "õ",
+        "Ã¶": "ö", "Ã·": "÷", "Ã¸": "ø", "Ã¹": "ù", "Ãº": "ú",
+        "Ã»": "û", "Ã¼": "ü", "Ã½": "ý", "Ã¾": "þ", "Ã¿": "ÿ"
+    }
+    Object.entries(REPLACEMENTS).forEach(entry => {
+        const [key, value] = entry;
+        // console.log(key, value);
+        input = input.replace(key, value);
+    });
+    return input;
 }
 

@@ -22,7 +22,8 @@
     "axios": "^1.4.0",
     "config": "^3.3.9",
     "cpx": "^1.5.0",
-    "minimist": "^1.2.8"
+    "minimist": "^1.2.8",
+    "utf8": "^3.0.0"
   },
   "pkg": {
     "targets": [
@@ -30,7 +31,6 @@
     ],
     "assets": [
       "build/build/Release/node-hide-console-window.node"
-    
     ],
     "outputPath": "dist",
     "name": "mdb-tc"
