@@ -16,11 +16,13 @@ console.log = function() { //
 };
 console.error = console.log;
 
+// end reroute log to debug file
+
 
 // first read arguments
 var argv = require('minimist')(process.argv.slice(2));
-// console.log(argv);
-// console.log('execPath: ', process.execPath);
+console.log(argv);
+console.log('execPath: ', process.execPath);
 // console.log('report: ', process.report);
 // console.log('report.filename: ', process.report.filename);
 // console.log('report.directory: ', process.report.directory);
@@ -39,7 +41,7 @@ if (process.execPath.endsWith("tc.exe") || process.execPath.endsWith("tc-hidden.
 
 }
 
-if (process.execPath.endsWith("-macos"))
+if (process.execPath.endsWith("-macos") || process.execPath.endsWith("-arm64") || process.execPath.endsWith("-x64"))
 {
     newDir = process.execPath.substring(0, process.execPath.lastIndexOf('/'));
     console.log('Starting directory: ' + process.cwd());

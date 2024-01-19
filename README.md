@@ -108,6 +108,9 @@ Then you can build it with this command
 
     ncc build index.js -o build
     pkg ./build/index.js -t node18-win-arm64,node18-macos-arm64 -o ./dist/mbd-tc
+
+    Mac-Only
+    pkg ./build/index.js -t node18-macos-arm64,node18-macos-x64 -o ./dist/mbd-tc
 or 
     
     npm run build
