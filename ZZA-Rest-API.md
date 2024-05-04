@@ -15,7 +15,7 @@ Um Caching zu verhindern, kann ein Random-Parameter an die URL angehängt werden
 Im Webinterface des Controllers kann man sich die Request im Developer-Panel unter Network anschauen.
 
 # Ein- oder zwei Gleise
-Es gibt Anzeigen mit einem oder zwei Gleisen. Die Gleise werden mit "GleisA" und "GleisB" bezeichnet.
+Es gibt Anzeigen mit einem oder zwei Gleisen. Die Gleise werden mit "GleisA" und "GleisB" bezeichnet und über den Parameter "path" angegeben.
 
 
 # Nächsten oder vorherigen Zug anzeigen
