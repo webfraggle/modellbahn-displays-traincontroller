@@ -64,6 +64,18 @@ if (argv['conf'])
 {
     process.env.NODE_ENV = argv['conf'];
 }
+axiosTimeout = 30000;
+if (argv['timeout'])
+{
+    axiosTimeout = argv['timeout'];
+}
+
+axiosConfig = {
+    timeout:axiosTimeout
+}
+
+console.log(axiosConfig);
+
 const config = require('config');
 const endpoint = config.get('endpoint');
 
@@ -87,7 +99,7 @@ if (argv['next'])
     url = endpoint+'/skipNext?path='+path;
     console.log('skip next, url:',url);
     axios
-    .get(url)
+    .get(url, axiosConfig)
     .then(function (response) {
         console.log('SUCCESS');
         process.exit(0);
@@ -104,7 +116,7 @@ if (argv['prev'])
     url = endpoint+'/skipPrev?path='+path;
     console.log('skip prev, url:',url);
     axios
-    .get(url)
+    .get(url, axiosConfig)
     .then(function (response) {
         console.log('SUCCESS');
         process.exit(0);
@@ -133,7 +145,7 @@ if (argv['setTime'])
         time: timeString
     };
     console.log("setTime obj:", obj);
-    axios.postForm(endpoint+'/setTime', obj)
+    axios.postForm(endpoint+'/setTime', obj, axiosConfig)
     .then(function (response) {
         console.log('SUCCESS',response.data);
         process.exit(0);
@@ -213,7 +225,7 @@ function setTrains(trains)
 {
     for (let i = 0; i < trains.length; i++) {
         const train = trains[i];
-        axios.post(train.url, train.train)
+        axios.post(train.url, train.train, axiosConfig)
         .then(function (response) {
             console.log('SUCCESS',response.data);
             // process.exit(0);

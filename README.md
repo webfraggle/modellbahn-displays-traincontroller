@@ -40,6 +40,10 @@ Verwenden Sie den Parameter „gleis“ mit „A“ oder „B“.
 ### Ein leeres Display anzeigen (Doppelspuranzeige):
     mbd-tc.exe –-gleis B --setTrain1 "|||||"
 
+### Spezialoptionen
+--timeout 1000
+Das http-timeout in ms um bei fehlerhafter Verbindung das Tool schneller zu beenden.
+
 ### So verhindern Sie das Popup eines Befehlszeilenfensters:
 Verwenden Sie die Datei **mbd-tc-hidden.exe** anstelle von mbd-tc.exe
 
@@ -80,6 +84,10 @@ Create a copy of the default json. Rename to your display's name, e.g. "gleis1.j
 Use the "gleis" parameter with "A" or "B".
 
     mbd-tc.exe --gleis B --setTime "12:30"
+
+### Special Option
+--timeout 1000
+The http-timeout in ms for cancelling the tool earlier because of connection issues.
 
 ## How to prevent the popup of a command line window
 Use the mbd-tc-hidden.exe file instead of mbd-tc.exe
