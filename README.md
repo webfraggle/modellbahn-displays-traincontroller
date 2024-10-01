@@ -40,8 +40,12 @@ Verwenden Sie den Parameter „gleis“ mit „A“ oder „B“.
 ### Ein leeres Display anzeigen (Doppelspuranzeige):
     mbd-tc.exe –-gleis B --setTrain1 "|||||"
 
+### Bild anzeigen
+    --image 00Logo.png
+Damit kann man in den Modi Manuell, Interval und Bilder ein Bild, welches auf den Controller geladen wurde, anzeigen. Das Bild wird so lange angezeigt, bis ein neuer Zug oder ein neues Bild angezeigt wird.
+
 ### Spezialoptionen
---timeout 1000
+    --timeout 1000
 Das http-timeout in ms um bei fehlerhafter Verbindung das Tool schneller zu beenden.
 
 ### So verhindern Sie das Popup eines Befehlszeilenfensters:
@@ -85,8 +89,12 @@ Use the "gleis" parameter with "A" or "B".
 
     mbd-tc.exe --gleis B --setTime "12:30"
 
+### Show an Image
+    --image 00Logo.png
+This allows you to display an image that has been loaded onto the controller in Manual, Interval and Images modes. The picture is displayed until a new move or a new picture is displayed.
+
 ### Special Option
---timeout 1000
+    --timeout 1000
 The http-timeout in ms for cancelling the tool earlier because of connection issues.
 
 ## How to prevent the popup of a command line window
@@ -115,7 +123,7 @@ You need the following node modules
 Then you can build it with this command
 
     ncc build index.js -o build
-    pkg ./build/index.js -t node18-win-arm64,node18-macos-arm64 -o ./dist/mbd-tc
+    pkg ./build/index.js -t node18-win-x64,node18-macos-arm64,node18-macos-x64 -o ./dist/mbd-tc
 
     #### Mac-Only
     pkg ./build/index.js -t node18-macos-arm64,node18-macos-x64 -o ./dist/mbd-tc
