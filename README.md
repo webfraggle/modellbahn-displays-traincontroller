@@ -51,7 +51,7 @@ Das http-timeout in ms um bei fehlerhafter Verbindung das Tool schneller zu been
 ### So verhindern Sie das Popup eines Befehlszeilenfensters:
 Verwenden Sie die Datei **mbd-tc-hidden.exe** anstelle von mbd-tc.exe
 
-### So debuggen Sie in TrainController:
+### So debuggen Sie:
 Verwenden Sie debug.bat. Ändern Sie den Pfad zu Ihrem Ordner und verwenden Sie debug.bat anstelle von mbd-tc.exe. Diese Bat-Datei öffnet einen zusätzlichen Texteditor, der verhindert, dass das Terminal geschlossen wird und Sie die Protokollmeldungen lesen können.
 
 # English Version
@@ -100,7 +100,7 @@ The http-timeout in ms for cancelling the tool earlier because of connection iss
 ## How to prevent the popup of a command line window
 Use the mbd-tc-hidden.exe file instead of mbd-tc.exe
 
-## How to debug in TrainController
+## How to debug
 Use debug.bat. Change path to your folder and use the debug.bat instead of the mbd-tc.exe. 
 This bat-file opens an extra notepad, this prevents the terminal to close and you can read the log messages.
 

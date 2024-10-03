@@ -10601,6 +10601,27 @@ if (argv['setTime'])
     });
 }
 
+// show an image from the controller
+if (argv['image'])
+{
+    // http://192.168.178.59/showImage?path=GleisA&filename=00Logo.png&_=1727795478219
+    url = endpoint+'/showImage?path='+path;
+    url += "&filename="+argv['image']
+    console.log('show image:',url);
+    axios
+    .get(url, axiosConfig)
+    .then(function (response) {
+        console.log('SUCCESS');
+        process.exit(0);
+    })
+    .catch(function (error) {
+        console.error('ERROR',error.toString());
+        process.exit(1);
+        return;
+        // console.log('ERROR',error.response.status, error.response.data);
+    });
+}
+
 // node index.js --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"
 
 var trains = []; 
