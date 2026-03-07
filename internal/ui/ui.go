@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"fyne.io/fyne/v2"
@@ -16,8 +18,6 @@ import (
 	"github.com/webfraggle/mbd-cli/internal/api"
 	"github.com/webfraggle/mbd-cli/internal/config"
 )
-
-const exeName = "mbd-cli"
 
 var commandList = []string{"--next", "--prev", "--setTime", "--setTrain1", "--setTrain2", "--setTrain3", "--image"}
 
@@ -46,10 +46,27 @@ func splitCommandLine(s string) []string {
 	return tokens
 }
 
+// exeToken returns the command prefix shown in the CLI builder, e.g. "./mbd-cli-arm64".
+func exeToken() string {
+	exe, err := os.Executable()
+	if err != nil {
+		exe = "mbd-cli"
+	}
+	base := filepath.Base(exe)
+	switch runtime.GOOS {
+	case "windows":
+		return `.\` + base
+	default: // darwin, linux
+		return "./" + base
+	}
+}
+
 func Run() {
 	a := app.New()
 	w := a.NewWindow("mbd-cli Konfiguration")
 	w.Resize(fyne.NewSize(960, 540))
+
+	exeCmd := exeToken()
 
 	// ── Shared state ─────────────────────────────────────────────────────────
 	configs, _ := config.List()
@@ -90,7 +107,7 @@ func Run() {
 	// ── Build command string ──────────────────────────────────────────────────
 	buildCommand := func() string {
 		var parts []string
-		parts = append(parts, exeName)
+		parts = append(parts, exeCmd)
 
 		switch cmdSelect.Selected {
 		case "--next":
