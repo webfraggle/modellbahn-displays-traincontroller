@@ -1,4 +1,4 @@
-module github.com/webfraggle/mbd-tc
+module github.com/webfraggle/mbd-cli
 
 go 1.21
 

@@ -7,13 +7,13 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 
-	"github.com/webfraggle/mbd-tc/internal/api"
-	"github.com/webfraggle/mbd-tc/internal/config"
+	"github.com/webfraggle/mbd-cli/internal/api"
+	"github.com/webfraggle/mbd-cli/internal/config"
 )
 
 func Run() {
 	a := app.New()
-	w := a.NewWindow("mbd-tc Konfiguration")
+	w := a.NewWindow("mbd-cli Konfiguration")
 	w.Resize(fyne.NewSize(560, 320))
 
 	configs, _ := config.List()

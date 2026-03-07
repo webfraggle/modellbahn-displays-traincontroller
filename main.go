@@ -9,10 +9,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/webfraggle/mbd-tc/internal/api"
-	"github.com/webfraggle/mbd-tc/internal/config"
-	"github.com/webfraggle/mbd-tc/internal/spawn"
-	"github.com/webfraggle/mbd-tc/internal/ui"
+	"github.com/webfraggle/mbd-cli/internal/api"
+	"github.com/webfraggle/mbd-cli/internal/config"
+	"github.com/webfraggle/mbd-cli/internal/spawn"
+	"github.com/webfraggle/mbd-cli/internal/ui"
 )
 
 func main() {

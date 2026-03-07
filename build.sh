@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build script for mbd-tc
+# Build script for mbd-cli
 #
 # Requirements:
 #   macOS ARM64:  Go 1.21+, Xcode Command Line Tools
@@ -18,8 +18,8 @@ skipped=0
 
 # ── macOS ARM64 (native, no Docker needed) ───────────────────────────────────
 echo "Building macOS ARM64 (Apple Silicon)..."
-if go build -ldflags "$LDFLAGS" -o "$OUTDIR/mbd-tc-arm64" . 2>&1; then
-    echo "  → $OUTDIR/mbd-tc-arm64"
+if go build -ldflags "$LDFLAGS" -o "$OUTDIR/mbd-cli-arm64" . 2>&1; then
+    echo "  → $OUTDIR/mbd-cli-arm64"
     ((ok++))
 else
     echo "  FAILED"
@@ -35,9 +35,9 @@ if ! command -v fyne-cross &>/dev/null; then
     ((skipped+=2))
 else
     echo "Building macOS Intel (AMD64) via fyne-cross..."
-    if fyne-cross darwin -arch amd64 -app-id com.webfraggle.mbd-tc -ldflags "$LDFLAGS" -output mbd-tc 2>&1; then
-        cp fyne-cross/bin/darwin-amd64/mbd-tc "$OUTDIR/mbd-tc-x64"
-        echo "  → $OUTDIR/mbd-tc-x64"
+    if fyne-cross darwin -arch amd64 -app-id de.modellbahn-displays.mbd-cli -ldflags "$LDFLAGS" -output mbd-cli 2>&1; then
+        cp fyne-cross/bin/darwin-amd64/mbd-cli "$OUTDIR/mbd-cli-x64"
+        echo "  → $OUTDIR/mbd-cli-x64"
         ((ok++))
     else
         echo "  FAILED"
@@ -46,9 +46,9 @@ else
 
     # Windows: fyne-cross builds with GUI subsystem by default (no console popup)
     echo "Building Windows AMD64 via fyne-cross..."
-    if fyne-cross windows -arch amd64 -app-id com.webfraggle.mbd-tc -output mbd-tc 2>&1; then
-        cp fyne-cross/bin/windows-amd64/mbd-tc.exe "$OUTDIR/mbd-tc.exe"
-        echo "  → $OUTDIR/mbd-tc.exe"
+    if fyne-cross windows -arch amd64 -app-id de.modellbahn-displays.mbd-cli -output mbd-cli 2>&1; then
+        cp fyne-cross/bin/windows-amd64/mbd-cli.exe "$OUTDIR/mbd-cli.exe"
+        echo "  → $OUTDIR/mbd-cli.exe"
         ((ok++))
     else
         echo "  FAILED"
