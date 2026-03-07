@@ -90,6 +90,20 @@ Standard ist Gleis A.
 
 ---
 
+## macOS: Gatekeeper-Warnung beim Download
+
+Wird die Binary aus dem Internet heruntergeladen und entpackt, blockiert macOS die Ausführung mit der Meldung „kann nicht überprüft werden". Das liegt am Quarantäne-Attribut, das beim Download gesetzt wird.
+
+**Einmalig im Terminal nach dem Entpacken:**
+
+```bash
+xattr -d com.apple.quarantine mbd-cli-arm64
+```
+
+**Oder:** Im Finder Rechtsklick auf die Datei → **Öffnen** → **Trotzdem öffnen**. Danach auch in Systemeinstellungen → Datenschutz & Sicherheit sichtbar.
+
+---
+
 ## Debugging
 
 Das Tool schreibt automatisch eine `debug.log` Datei neben der ausführbaren Datei. Dort sind alle aufgerufenen Argumente und eventuelle Fehler protokolliert.
@@ -204,6 +218,20 @@ Default is track A.
 |---|---|
 | `--timeout <ms>` | HTTP timeout in milliseconds (default: 30000) |
 | `--conf <name>` | Loads `config/<name>.json` instead of `config/default.json` |
+
+---
+
+## macOS: Gatekeeper warning after download
+
+When the binary is downloaded from the internet and unzipped, macOS blocks execution with a message saying it "cannot be verified". This is caused by the quarantine attribute set during download.
+
+**Once in Terminal after unzipping:**
+
+```bash
+xattr -d com.apple.quarantine mbd-cli-arm64
+```
+
+**Or:** Right-click the file in Finder → **Open** → **Open Anyway**. Also visible afterwards in System Settings → Privacy & Security.
 
 ---
 
