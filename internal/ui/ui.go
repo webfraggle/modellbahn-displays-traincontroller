@@ -2,6 +2,8 @@ package ui
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 	"strings"
 
 	"fyne.io/fyne/v2"
@@ -18,6 +20,31 @@ import (
 const exeName = "mbd-cli"
 
 var commandList = []string{"--next", "--prev", "--setTime", "--setTrain1", "--setTrain2", "--setTrain3", "--image"}
+
+// splitCommandLine splits a command string into tokens, respecting double-quoted arguments.
+func splitCommandLine(s string) []string {
+	var tokens []string
+	var cur strings.Builder
+	inQuote := false
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		switch {
+		case c == '"':
+			inQuote = !inQuote
+		case c == ' ' && !inQuote:
+			if cur.Len() > 0 {
+				tokens = append(tokens, cur.String())
+				cur.Reset()
+			}
+		default:
+			cur.WriteByte(c)
+		}
+	}
+	if cur.Len() > 0 {
+		tokens = append(tokens, cur.String())
+	}
+	return tokens
+}
 
 func Run() {
 	a := app.New()
@@ -55,8 +82,7 @@ func Run() {
 	imageFile := widget.NewEntry()
 	imageFile.SetPlaceHolder("00Logo.png")
 
-	cmdOutput := widget.NewLabel("")
-	cmdOutput.Wrapping = fyne.TextWrapBreak
+	cmdOutput := widget.NewEntry()
 
 	execStatus := widget.NewLabel("")
 	dynamicArea := container.NewVBox()
@@ -103,7 +129,6 @@ func Run() {
 
 	refreshCmd := func() {
 		cmdOutput.SetText(buildCommand())
-		cmdOutput.Refresh()
 	}
 
 	// ── Update dynamic fields based on selected command ───────────────────────
@@ -258,44 +283,32 @@ func Run() {
 	imageFile.OnChanged = func(_ string) { refreshCmd() }
 
 	copyBtn := widget.NewButtonWithIcon("Kopieren", theme.ContentCopyIcon(), func() {
-		w.Clipboard().SetContent(buildCommand())
+		w.Clipboard().SetContent(cmdOutput.Text)
 	})
 
 	executeBtn := widget.NewButtonWithIcon("Ausführen", theme.MediaPlayIcon(), func() {
-		execStatus.SetText("Läuft...")
+		execStatus.SetText("Gestartet...")
 		go func() {
-			cfg, err := config.Load(selectedConfig)
+			exePath, err := os.Executable()
 			if err != nil {
 				execStatus.SetText("Fehler: " + err.Error())
 				return
 			}
-			client := api.NewClient(cfg.Endpoint, 10000)
-			gleis := "GleisA"
-			if gleisGroup.Selected == "B" {
-				gleis = "GleisB"
+			// Parse command text (skip first token = executable name)
+			tokens := splitCommandLine(cmdOutput.Text)
+			if len(tokens) < 2 {
+				execStatus.SetText("Kein Befehl angegeben")
+				return
 			}
-			switch cmdSelect.Selected {
-			case "--next":
-				err = client.SkipNext(gleis)
-			case "--prev":
-				err = client.SkipPrev(gleis)
-			case "--setTime":
-				err = client.SetTime(gleis, timeEntry.Text)
-			case "--setTrain1", "--setTrain2", "--setTrain3":
-				n := int(cmdSelect.Selected[len(cmdSelect.Selected)-1] - '0')
-				slot := api.ParseTrain(n, strings.Join([]string{
-					trainNr.Text, trainTime.Text, trainDest.Text,
-					trainVia.Text, trainDelay.Text, trainInfo.Text,
-				}, "|"), gleis)
-				err = client.SetTrains([]api.TrainSlot{slot})
-			case "--image":
-				err = client.ShowImage(gleis, imageFile.Text)
-			}
-			if err != nil {
+			args := tokens[1:]
+			cmd := exec.Command(exePath, args...)
+			if err := cmd.Start(); err != nil {
 				execStatus.SetText("Fehler: " + err.Error())
-			} else {
-				execStatus.SetText("Erfolgreich")
+				return
 			}
+			// The foreground process spawns --bg and exits quickly
+			cmd.Wait()
+			execStatus.SetText("Gestartet — siehe debug.log")
 		}()
 	})
 
