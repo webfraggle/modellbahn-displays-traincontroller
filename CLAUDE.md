@@ -36,6 +36,13 @@ go run .                 # opens config UI (Fyne window)
 
 Produces binaries in `dist/`: `mbd-cli-arm64` (native), `mbd-cli-x64` and `mbd-cli.exe` via fyne-cross + Docker. Docker must be running for the latter two. App-ID: `de.modellbahn-displays.mbd-cli`.
 
+**fyne-cross prerequisite:** `fyne-cross` requires the **old** fyne CLI (`fyne.io/fyne/v2/cmd/fyne`), not the new `fyne.io/tools/cmd/fyne`. The new CLI renamed internal flags and is not yet compatible with fyne-cross.
+
+```
+go install github.com/fyne-io/fyne-cross@latest
+go install fyne.io/fyne/v2/cmd/fyne@latest   # ← required, ignore the deprecation notice
+```
+
 ### Architecture
 
 ```
@@ -76,7 +83,7 @@ Fields `fusszeile`, `abschnitte`, `reihung` are sent but have no effect on the d
 
 **`repairUTF8()`** (`internal/api/utf8.go`) — fixes double-encoded UTF-8 from TrainController on Windows (Windows-1252 mis-interpreted as UTF-8).
 
-**Fyne UI** (`internal/ui/ui.go`) — opens when binary is called with no arguments. Shows list of config profiles, allows editing endpoint URL, creating/deleting profiles, and testing the connection.
+**Fyne UI** (`internal/ui/ui.go`) — opens when binary is called with no arguments. Left panel: config profiles (create/delete/edit endpoint/test connection). Right panel: CLI command builder that assembles a ready-to-run command string based on selected command, track (Gleis A/B), and dynamic argument fields. The command string is editable and can be copied or executed directly via the "Ausführen" button (calls `os.Executable()` externally so the spawn mechanism and `debug.log` work identically to TrainController). The command prefix is platform-aware: `./mbd-cli-arm64` or `./mbd-cli-x64` on macOS (derived from the running binary name), `.\mbd-cli.exe` on Windows.
 
 ## Original Node.js Implementation (branch: main, kept for reference)
 
