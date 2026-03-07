@@ -5,6 +5,11 @@
 #   macOS ARM64:  Go 1.21+, Xcode Command Line Tools
 #   macOS Intel + Windows:  Docker + fyne-cross
 #     go install github.com/fyne-io/fyne-cross@latest
+#     go install fyne.io/fyne/v2/cmd/fyne@latest   ← fyne-cross requires the OLD fyne CLI
+#     (fyne.io/tools/cmd/fyne is incompatible with fyne-cross until fyne-cross is updated)
+
+# Ensure ~/go/bin is on PATH (needed when script is called directly, not from an interactive shell)
+export PATH="$HOME/go/bin:$PATH"
 
 LDFLAGS="-s -w"
 # Note: do not wrap $LDFLAGS in extra quotes when passing to fyne-cross
