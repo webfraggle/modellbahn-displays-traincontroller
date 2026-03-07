@@ -80,7 +80,7 @@ func Run() {
 	trainInfo.SetPlaceHolder("Sonderinfo")
 
 	imageFile := widget.NewEntry()
-	imageFile.SetPlaceHolder("00Logo.png")
+	imageFile.SetPlaceHolder("00logo.png")
 
 	cmdOutput := widget.NewEntry()
 
@@ -113,7 +113,7 @@ func Run() {
 		case "--image":
 			f := imageFile.Text
 			if f == "" {
-				f = "filename.png"
+				f = "00logo.png"
 			}
 			parts = append(parts, "--image", f)
 		}
