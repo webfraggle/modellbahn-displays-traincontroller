@@ -1,136 +1,261 @@
-# Modellbahn Displays - TrainController Anbindung
+# mbd-cli — Modellbahn Displays CLI
 
-(English version below)
+Kommandozeilentool zur Steuerung von Zugzielanzeiger-Displays über deren REST API.
+Entwickelt für den Einsatz aus Modellbahn-Software wie TrainController, kehrt sofort zurück ohne den Aufrufer zu blockieren.
+
+*(English version below)*
+
+---
+
 ## Konfiguration
-Gehen Sie zum Konfigurationsordner und bearbeiten Sie default.json. Geben
-Sie die IP-Adresse Ihres Displays ein:
 
-    {
-    "endpoint":"http://192.168.178.155"
-    }
+Beim ersten Start ohne Argumente öffnet sich die Konfigurations-Oberfläche:
 
-### Option 1: Zu nächsten und vorherigen Zugziel springen:
-Verwalten Sie alle Ihre Züge über die Weboberfläche Ihres
-Zugzielanzeigers und springen Sie dann per Kommandozeile / externem Programm zum nächsten oder vorherigen Zug.
+```
+./mbd-cli-arm64        # macOS Apple Silicon
+./mbd-cli-x64          # macOS Intel
+.\mbd-cli.exe          # Windows
+```
 
-    mbd-tc.exe --next
-    mbd-tc.exe --prev
-### Option 2: Aufruf der Anzeigen vom Webinterface über externes Programm (z.B.TC):
-Verwalten Sie alle Ihre Züge über das Webinterface Ihres Zugzielanzeigers und stellen Sie die Uhrzeit per Kommandozeile / externem Programm ein.
+Dort können Konfigurationsprofile angelegt, die Endpoint-URL eingetragen und die Verbindung getestet werden. Die Konfigurationen werden als JSON-Dateien im `config/`-Ordner neben der ausführbaren Datei gespeichert:
 
-    mbd-tc.exe --setTime "12:30"
-### Option 3: Zuginformationen direkt in externem Programm (z.B. TC) einstellen:
-Verwenden Sie die Optionen setTrain1 bis setTrain3, um alle Informationen direkt festzulegen. Sie können einen oder mehrere gleichzeitig verwenden.
-Der Wert ist eine durch 5 Pipes getrennte Zeichenfolge mit folgendem Schema:
+```json
+{ "endpoint": "http://192.168.178.155" }
+```
 
-„TrainID|Time|Destination|Via|Delay|Special info“
+Der Befehlsgenerator in der rechten Hälfte der Oberfläche hilft beim Zusammenstellen der korrekten Befehle zum Kopieren oder direkten Ausführen.
 
-    mbd-tc.exe --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"
+---
 
-### Einsatz mehrerer Displays:
-Erstellen Sie eine Kopie des Standard-JSON. Benennen Sie es in den Namen Ihres Displays um, z. B. „gleis1.json“. Verwenden Sie die Befehlszeilenoption --conf, um diese neue Konfiguration zu laden:
+## Optionen
 
-    mbd-tc.exe --conf gleis1 --setTime "12:30"
-    
-### Wie man eine Doppelspuranzeige verwendet:
-Verwenden Sie den Parameter „gleis“ mit „A“ oder „B“.
+### Nächsten / vorherigen Zug anzeigen
 
-    mbd-tc.exe --gleis B --setTime "12:30"
+```
+mbd-cli.exe --next
+mbd-cli.exe --prev
+```
 
-### Ein leeres Display anzeigen (Doppelspuranzeige):
-    mbd-tc.exe –-gleis B --setTrain1 "|||||"
+### Uhrzeit setzen
+
+```
+mbd-cli.exe --setTime "12:30"
+```
+
+### Zuginformationen direkt setzen
+
+Setzt bis zu drei Zugslots gleichzeitig. Der Wert ist eine durch `|` getrennte Zeichenfolge:
+`TrainID|Zeit|Ziel|Via|Verspätung|Sonderinfo`
+
+```
+mbd-cli.exe --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|"
+mbd-cli.exe --setTrain1 "ICE123|12:30|Berlin|Hannover|0|Info" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|"
+```
+
+Leeres Display (Doppelspuranzeige):
+```
+mbd-cli.exe --gleis B --setTrain1 "|||||"
+```
 
 ### Bild anzeigen
-    --image 00Logo.png
-Damit kann man in den Modi Manuell, Interval und Bilder ein Bild, welches auf den Controller geladen wurde, anzeigen. Das Bild wird so lange angezeigt, bis ein neuer Zug oder ein neues Bild angezeigt wird.
 
-### Spezialoptionen
-    --timeout 1000
-Das http-timeout in ms um bei fehlerhafter Verbindung das Tool schneller zu beenden.
+```
+mbd-cli.exe --image 00Logo.png
+```
 
-### So verhindern Sie das Popup eines Befehlszeilenfensters:
-Verwenden Sie die Datei **mbd-tc-hidden.exe** anstelle von mbd-tc.exe
+Zeigt ein auf den Controller geladenes Bild (in den Modi Manuell, Intervall, Bilder). Das Bild bleibt bis zum nächsten Zug oder Bild aktiv.
 
-### So debuggen Sie:
-Verwenden Sie debug.bat. Ändern Sie den Pfad zu Ihrem Ordner und verwenden Sie debug.bat anstelle von mbd-tc.exe. Diese Bat-Datei öffnet einen zusätzlichen Texteditor, der verhindert, dass das Terminal geschlossen wird und Sie die Protokollmeldungen lesen können.
+### Mehrere Displays
+
+Lege für jedes Display eine eigene Konfigurationsdatei an (z. B. `gleis1.json`) und lade sie mit `--conf`:
+
+```
+mbd-cli.exe --conf gleis1 --setTime "12:30"
+```
+
+### Doppelspuranzeige
+
+```
+mbd-cli.exe --gleis B --setTime "12:30"
+```
+
+Standard ist Gleis A.
+
+### Weitere Optionen
+
+| Option | Beschreibung |
+|---|---|
+| `--timeout <ms>` | HTTP-Timeout in Millisekunden (Standard: 30000) |
+| `--conf <name>` | Lädt `config/<name>.json` statt `config/default.json` |
+
+---
+
+## macOS: Gatekeeper-Warnung beim Download
+
+Wird die Binary aus dem Internet heruntergeladen und entpackt, blockiert macOS die Ausführung mit der Meldung „kann nicht überprüft werden". Das liegt am Quarantäne-Attribut, das beim Download gesetzt wird.
+
+**Einmalig im Terminal nach dem Entpacken:**
+
+```bash
+xattr -d com.apple.quarantine mbd-cli-arm64
+```
+
+**Oder:** Im Finder Rechtsklick auf die Datei → **Öffnen** → **Trotzdem öffnen**. Danach auch in Systemeinstellungen → Datenschutz & Sicherheit sichtbar.
+
+---
+
+## Debugging
+
+Das Tool schreibt automatisch eine `debug.log` Datei neben der ausführbaren Datei. Dort sind alle aufgerufenen Argumente und eventuelle Fehler protokolliert.
+
+---
+
+## Build
+
+```
+./build.sh
+```
+
+Erzeugt drei Binaries in `dist/`:
+
+| Datei | Ziel |
+|---|---|
+| `mbd-cli-arm64` | macOS Apple Silicon (nativ) |
+| `mbd-cli-x64` | macOS Intel (via fyne-cross + Docker) |
+| `mbd-cli.exe` | Windows AMD64 (via fyne-cross + Docker) |
+
+Voraussetzungen für macOS Intel- und Windows-Build:
+- Docker (muss laufen)
+- `go install github.com/fyne-io/fyne-cross@latest`
+- `go install fyne.io/fyne/v2/cmd/fyne@latest` *(altes fyne CLI — Deprecation-Hinweis ignorieren, fyne-cross benötigt diese Version)*
+
+---
+
+---
 
 # English Version
-## How to use
-Go to config folder and edit default.json.
-Enter your display's IP-Adresse
 
-    {
-    "endpoint":"http://192.168.178.155"
-    }
+Command-line tool to control Zugzielanzeiger train destination displays via their REST API.
+Designed for use from model railway software like TrainController — returns immediately without blocking the caller.
 
-### Option 1: Skip next and prev
-Manage all your trains with the webinterface of your "Zugzielanzeiger" and then skip to next or previous train via command-line / external program with this tool. 
-    
-    mbd-tc.exe --next
-    mbd-tc.exe --prev
+## Configuration
 
-### Option 2: setTime
-Manage all your trains with the webinterface of your "Zugzielanzeiger" and the set the time via command-line / external program with this tool. 
-    
-    mbd-tc.exe --setTime "12:30"
-### Option 3: set train infos directly
-Use option setTrain1 to setTrain3 to set all the infos directly. You can use one ore more at a time. The value is a pipe separted string. With the following schema: "TrainID|Time|Destination|Via|Delay|Special info"
- 
-    
-    mbd-tc.exe --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|Kommt von der Commandline" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|LOL" --setTrain3 "ICE3|09:45|Lübeck|Hamburg|0|"
+When launched without arguments, the configuration UI opens:
 
-### Use of more displays
-Create a copy of the default json. Rename to your display's name, e.g. "gleis1.json". Use the command-line option --conf to load this new config.
+```
+./mbd-cli-arm64        # macOS Apple Silicon
+./mbd-cli-x64          # macOS Intel
+.\mbd-cli.exe          # Windows
+```
 
-    mbd-tc.exe --conf gleis1 --setTime "12:30"
+Create profiles, enter the display's endpoint URL, and test the connection. Configs are stored as JSON files in a `config/` folder next to the executable:
 
-### how to use a double track display
-Use the "gleis" parameter with "A" or "B".
+```json
+{ "endpoint": "http://192.168.178.155" }
+```
 
-    mbd-tc.exe --gleis B --setTime "12:30"
+The command builder on the right side of the UI helps assemble the correct commands for copying or direct execution.
 
-### Show an Image
-    --image 00Logo.png
-This allows you to display an image that has been loaded onto the controller in Manual, Interval and Images modes. The picture is displayed until a new move or a new picture is displayed.
+---
 
-### Special Option
-    --timeout 1000
-The http-timeout in ms for cancelling the tool earlier because of connection issues.
+## Options
 
-## How to prevent the popup of a command line window
-Use the mbd-tc-hidden.exe file instead of mbd-tc.exe
+### Skip to next / previous train
 
-## How to debug
-Use debug.bat. Change path to your folder and use the debug.bat instead of the mbd-tc.exe. 
-This bat-file opens an extra notepad, this prevents the terminal to close and you can read the log messages.
+```
+mbd-cli.exe --next
+mbd-cli.exe --prev
+```
 
-# How to develop.
-Please use nvm to switch to node version 18.16
-    
-    nvm use 18.16
-    npm install
+### Set time
 
+```
+mbd-cli.exe --setTime "12:30"
+```
 
+### Set train information directly
 
-## How to build executable.
-I used "pkg" to build Windows & MacOS executables.
+Sets up to three train slots at once. The value is a `|`-separated string:
+`TrainID|Time|Destination|Via|Delay|SpecialInfo`
 
-You need the following node modules
- 
-    npm install -g pkg
-    npm i -g @vercel/ncc
+```
+mbd-cli.exe --setTrain1 "ICE123|12:30|Berlin|Hannover - Wolfsburg|0|"
+mbd-cli.exe --setTrain1 "ICE123|12:30|Berlin|Hannover|0|Info" --setTrain2 "RE50|21:12|Bebra|Hünfeld|+10|"
+```
 
-Then you can build it with this command
+Clear a slot on a double-track display:
+```
+mbd-cli.exe --gleis B --setTrain1 "|||||"
+```
 
-    ncc build index.js -o build
-    pkg ./build/index.js -t node18-win-x64,node18-macos-arm64,node18-macos-x64 -o ./dist/mbd-tc
+### Show an image
 
-    #### Mac-Only
-    pkg ./build/index.js -t node18-macos-arm64,node18-macos-x64 -o ./dist/mbd-tc
-or 
-    
-    npm run build
+```
+mbd-cli.exe --image 00Logo.png
+```
 
-To prevent showing up a command prompt window, use PE Tools to change Subsystem from 3 to 2.
-Explanation here:
-https://stackoverflow.com/questions/22653010/prevent-console-window-from-being-created-in-custom-node-js-build
+Displays an image previously uploaded to the controller (in Manual, Interval, or Images mode). The image stays on screen until the next train or image command.
+
+### Multiple displays
+
+Create a config file for each display (e.g. `gleis1.json`) and load it with `--conf`:
+
+```
+mbd-cli.exe --conf gleis1 --setTime "12:30"
+```
+
+### Double-track display
+
+```
+mbd-cli.exe --gleis B --setTime "12:30"
+```
+
+Default is track A.
+
+### Further options
+
+| Option | Description |
+|---|---|
+| `--timeout <ms>` | HTTP timeout in milliseconds (default: 30000) |
+| `--conf <name>` | Loads `config/<name>.json` instead of `config/default.json` |
+
+---
+
+## macOS: Gatekeeper warning after download
+
+When the binary is downloaded from the internet and unzipped, macOS blocks execution with a message saying it "cannot be verified". This is caused by the quarantine attribute set during download.
+
+**Once in Terminal after unzipping:**
+
+```bash
+xattr -d com.apple.quarantine mbd-cli-arm64
+```
+
+**Or:** Right-click the file in Finder → **Open** → **Open Anyway**. Also visible afterwards in System Settings → Privacy & Security.
+
+---
+
+## Debugging
+
+The tool automatically writes a `debug.log` file next to the executable, logging all arguments and any errors.
+
+---
+
+## Build
+
+```
+./build.sh
+```
+
+Produces three binaries in `dist/`:
+
+| File | Target |
+|---|---|
+| `mbd-cli-arm64` | macOS Apple Silicon (native) |
+| `mbd-cli-x64` | macOS Intel (via fyne-cross + Docker) |
+| `mbd-cli.exe` | Windows AMD64 (via fyne-cross + Docker) |
+
+Requirements for macOS Intel and Windows builds:
+- Docker (must be running)
+- `go install github.com/fyne-io/fyne-cross@latest`
+- `go install fyne.io/fyne/v2/cmd/fyne@latest` *(old fyne CLI — ignore the deprecation notice, fyne-cross requires this version)*
