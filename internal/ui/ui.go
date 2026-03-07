@@ -55,8 +55,8 @@ func Run() {
 	imageFile := widget.NewEntry()
 	imageFile.SetPlaceHolder("00Logo.png")
 
-	cmdOutput := widget.NewEntry()
-	cmdOutput.Disable()
+	cmdOutput := widget.NewLabel("")
+	cmdOutput.Wrapping = fyne.TextWrapBreak
 
 	execStatus := widget.NewLabel("")
 	dynamicArea := container.NewVBox()
@@ -103,6 +103,7 @@ func Run() {
 
 	refreshCmd := func() {
 		cmdOutput.SetText(buildCommand())
+		cmdOutput.Refresh()
 	}
 
 	// ── Update dynamic fields based on selected command ───────────────────────
@@ -257,7 +258,7 @@ func Run() {
 	imageFile.OnChanged = func(_ string) { refreshCmd() }
 
 	copyBtn := widget.NewButtonWithIcon("Kopieren", theme.ContentCopyIcon(), func() {
-		w.Clipboard().SetContent(cmdOutput.Text)
+		w.Clipboard().SetContent(buildCommand())
 	})
 
 	executeBtn := widget.NewButtonWithIcon("Ausführen", theme.MediaPlayIcon(), func() {
@@ -300,18 +301,25 @@ func Run() {
 
 	cmdRow := container.NewBorder(nil, nil, nil, copyBtn, cmdOutput)
 
-	rightPanel := container.NewVBox(
+	rightTop := container.NewVBox(
 		widget.NewRichTextFromMarkdown("### CLI Befehlsgenerator"),
 		widget.NewSeparator(),
 		widget.NewForm(
 			widget.NewFormItem("Befehl", cmdSelect),
 			widget.NewFormItem("Gleis", gleisGroup),
 		),
-		dynamicArea,
+	)
+
+	rightBottom := container.NewVBox(
 		widget.NewSeparator(),
 		widget.NewLabel("Befehl zum Kopieren:"),
 		cmdRow,
 		container.NewHBox(executeBtn, execStatus),
+	)
+
+	// Border layout: top and bottom sections are fixed, dynamic fields fill the middle
+	rightPanel := container.NewBorder(rightTop, rightBottom, nil, nil,
+		container.NewScroll(dynamicArea),
 	)
 
 	// ── Initialize ────────────────────────────────────────────────────────────
