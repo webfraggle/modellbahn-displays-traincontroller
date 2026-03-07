@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**mbd-tc** is a CLI tool that bridges model railway software (e.g., TrainController) with "Zugzielanzeiger" (train destination display) hardware controllers via their REST API.
+**mbd-cli** is a CLI tool that bridges model railway software (e.g., TrainController) with "Zugzielanzeiger" (train destination display) hardware controllers via their REST API.
 
 The active implementation is the **Go rewrite** on branch `go-rewrite`. The original Node.js implementation (`index.js`) remains on `main` for reference.
 
@@ -34,7 +34,7 @@ go run .                 # opens config UI (Fyne window)
 ./build.sh
 ```
 
-Produces binaries in `dist/`. For Windows, see the commented section in `build.sh` (requires `brew install mingw-w64` for cross-compilation, or build natively on Windows).
+Produces binaries in `dist/`: `mbd-cli-arm64` (native), `mbd-cli-x64` and `mbd-cli.exe` via fyne-cross + Docker. Docker must be running for the latter two. App-ID: `de.modellbahn-displays.mbd-cli`.
 
 ### Architecture
 
