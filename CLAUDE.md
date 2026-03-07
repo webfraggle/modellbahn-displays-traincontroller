@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **mbd-cli** is a CLI tool that bridges model railway software (e.g., TrainController) with "Zugzielanzeiger" (train destination display) hardware controllers via their REST API.
 
-The active implementation is the **Go rewrite** on branch `go-rewrite`. The original Node.js implementation (`index.js`) remains on `main` for reference.
+The Go implementation is the only active codebase on `main`. The original Node.js implementation has been removed and is accessible via the git tag `last-nodejs-version`.
 
-## Go Implementation (active, branch: go-rewrite)
+## Go Implementation
 
 ### Setup
 
@@ -85,6 +85,6 @@ Fields `fusszeile`, `abschnitte`, `reihung` are sent but have no effect on the d
 
 **Fyne UI** (`internal/ui/ui.go`) — opens when binary is called with no arguments. Left panel: config profiles (create/delete/edit endpoint/test connection). Right panel: CLI command builder that assembles a ready-to-run command string based on selected command, track (Gleis A/B), and dynamic argument fields. The command string is editable and can be copied or executed directly via the "Ausführen" button (calls `os.Executable()` externally so the spawn mechanism and `debug.log` work identically to TrainController). The command prefix is platform-aware: `./mbd-cli-arm64` or `./mbd-cli-x64` on macOS (derived from the running binary name), `.\mbd-cli.exe` on Windows.
 
-## Original Node.js Implementation (branch: main, kept for reference)
+## Original Node.js Implementation
 
-Entry point: `index.js`. Built with `ncc` + `pkg`. Known issues: antivirus false positives on Windows, Gatekeeper issues on macOS, blocking caller while HTTP request runs.
+Removed from `main`. Accessible via git tag `last-nodejs-version`. Entry point was `index.js`, built with `ncc` + `pkg`. Known issues: antivirus false positives on Windows, Gatekeeper issues on macOS, blocking caller while HTTP request runs.
