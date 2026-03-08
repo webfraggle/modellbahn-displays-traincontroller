@@ -19,7 +19,7 @@ import (
 	"github.com/webfraggle/mbd-cli/internal/config"
 )
 
-var commandList = []string{"--next", "--prev", "--setTime", "--setTrain1", "--setTrain2", "--setTrain3", "--image"}
+var commandList = []string{"--next", "--prev", "--setTime", "--setTrain1", "--setTrain2", "--setTrain3", "--setAllTrains", "--image"}
 
 // splitCommandLine splits a command string into tokens, respecting double-quoted arguments.
 func splitCommandLine(s string) []string {
@@ -46,27 +46,24 @@ func splitCommandLine(s string) []string {
 	return tokens
 }
 
-// exeToken returns the command prefix shown in the CLI builder, e.g. "./mbd-cli-arm64".
-func exeToken() string {
-	exe, err := os.Executable()
-	if err != nil {
-		exe = "mbd-cli"
-	}
-	base := filepath.Base(exe)
-	switch runtime.GOOS {
-	case "windows":
-		return `.\` + base
-	default: // darwin, linux
-		return "./" + base
-	}
-}
-
 func Run() {
 	a := app.New()
 	w := a.NewWindow("mbd-cli Konfiguration")
 	w.Resize(fyne.NewSize(960, 540))
 
-	exeCmd := exeToken()
+	// ── Exe path variants ─────────────────────────────────────────────────────
+	exeFull, err := os.Executable()
+	if err != nil {
+		exeFull = "mbd-cli"
+	}
+	exeBase := filepath.Base(exeFull)
+	var exeRel string
+	switch runtime.GOOS {
+	case "windows":
+		exeRel = `.\` + exeBase
+	default:
+		exeRel = "./" + exeBase
+	}
 
 	// ── Shared state ─────────────────────────────────────────────────────────
 	configs, _ := config.List()
@@ -82,24 +79,27 @@ func Run() {
 
 	timeEntry := widget.NewEntry()
 	timeEntry.SetPlaceHolder("HH:MM")
+	timeEntry.SetText("12:30")
 
-	trainNr := widget.NewEntry()
-	trainNr.SetPlaceHolder("ICE123")
-	trainTime := widget.NewEntry()
-	trainTime.SetPlaceHolder("12:30")
-	trainDest := widget.NewEntry()
-	trainDest.SetPlaceHolder("Berlin")
-	trainVia := widget.NewEntry()
-	trainVia.SetPlaceHolder("Hannover")
-	trainDelay := widget.NewEntry()
-	trainDelay.SetPlaceHolder("0")
-	trainInfo := widget.NewEntry()
-	trainInfo.SetPlaceHolder("Sonderinfo")
+	newTrainEntries := func(nr, tim, dest, via string) (eNr, eTim, eDest, eVia, eDelay, eInfo *widget.Entry) {
+		eNr = widget.NewEntry(); eNr.SetText(nr)
+		eTim = widget.NewEntry(); eTim.SetText(tim)
+		eDest = widget.NewEntry(); eDest.SetText(dest)
+		eVia = widget.NewEntry(); eVia.SetText(via)
+		eDelay = widget.NewEntry(); eDelay.SetText("0")
+		eInfo = widget.NewEntry(); eInfo.SetPlaceHolder("Sonderinfo")
+		return
+	}
+	train1Nr, train1Time, train1Dest, train1Via, train1Delay, train1Info := newTrainEntries("ICE123", "12:30", "Berlin", "Hannover")
+	train2Nr, train2Time, train2Dest, train2Via, train2Delay, train2Info := newTrainEntries("RE50", "14:00", "Frankfurt", "Kassel")
+	train3Nr, train3Time, train3Dest, train3Via, train3Delay, train3Info := newTrainEntries("IC2", "16:30", "Hamburg", "Hannover")
 
 	imageFile := widget.NewEntry()
 	imageFile.SetPlaceHolder("00logo.png")
+	imageFile.SetText("00logo.png")
 
 	cmdOutput := widget.NewEntry()
+	fullPathCheck := widget.NewCheck("Vollständiger Pfad", nil)
 
 	execStatus := widget.NewLabel("")
 	dynamicArea := container.NewVBox()
@@ -107,7 +107,11 @@ func Run() {
 	// ── Build command string ──────────────────────────────────────────────────
 	buildCommand := func() string {
 		var parts []string
-		parts = append(parts, exeCmd)
+		if fullPathCheck.Checked {
+			parts = append(parts, exeFull)
+		} else {
+			parts = append(parts, exeRel)
+		}
 
 		switch cmdSelect.Selected {
 		case "--next":
@@ -115,24 +119,29 @@ func Run() {
 		case "--prev":
 			parts = append(parts, "--prev")
 		case "--setTime":
-			t := timeEntry.Text
-			if t == "" {
-				t = "HH:MM"
-			}
-			parts = append(parts, "--setTime", fmt.Sprintf(`"%s"`, t))
+			parts = append(parts, "--setTime", fmt.Sprintf(`"%s"`, timeEntry.Text))
 		case "--setTrain1", "--setTrain2", "--setTrain3":
 			n := string(cmdSelect.Selected[len(cmdSelect.Selected)-1])
-			s := strings.Join([]string{
-				trainNr.Text, trainTime.Text, trainDest.Text,
-				trainVia.Text, trainDelay.Text, trainInfo.Text,
-			}, "|")
-			parts = append(parts, "--setTrain"+n, fmt.Sprintf(`"%s"`, s))
-		case "--image":
-			f := imageFile.Text
-			if f == "" {
-				f = "00logo.png"
+			var nr, tim, dest, via, delay, info string
+			switch n {
+			case "1":
+				nr, tim, dest, via, delay, info = train1Nr.Text, train1Time.Text, train1Dest.Text, train1Via.Text, train1Delay.Text, train1Info.Text
+			case "2":
+				nr, tim, dest, via, delay, info = train2Nr.Text, train2Time.Text, train2Dest.Text, train2Via.Text, train2Delay.Text, train2Info.Text
+			case "3":
+				nr, tim, dest, via, delay, info = train3Nr.Text, train3Time.Text, train3Dest.Text, train3Via.Text, train3Delay.Text, train3Info.Text
 			}
-			parts = append(parts, "--image", f)
+			parts = append(parts, "--setTrain"+n, fmt.Sprintf(`"%s"`, strings.Join([]string{nr, tim, dest, via, delay, info}, "|")))
+		case "--setAllTrains":
+			for i, f := range [3][6]string{
+				{train1Nr.Text, train1Time.Text, train1Dest.Text, train1Via.Text, train1Delay.Text, train1Info.Text},
+				{train2Nr.Text, train2Time.Text, train2Dest.Text, train2Via.Text, train2Delay.Text, train2Info.Text},
+				{train3Nr.Text, train3Time.Text, train3Dest.Text, train3Via.Text, train3Delay.Text, train3Info.Text},
+			} {
+				parts = append(parts, fmt.Sprintf("--setTrain%d", i+1), fmt.Sprintf(`"%s"`, strings.Join(f[:], "|")))
+			}
+		case "--image":
+			parts = append(parts, "--image", imageFile.Text)
 		}
 
 		if gleisGroup.Selected == "B" {
@@ -149,6 +158,22 @@ func Run() {
 	}
 
 	// ── Update dynamic fields based on selected command ───────────────────────
+	trainForm := func(nr, tim, dest, via, delay, info *widget.Entry) fyne.CanvasObject {
+		return widget.NewForm(
+			widget.NewFormItem("Zug-Nr", nr),
+			widget.NewFormItem("Zeit", tim),
+			widget.NewFormItem("Ziel", dest),
+			widget.NewFormItem("Via", via),
+			widget.NewFormItem("Verspätung", delay),
+			widget.NewFormItem("Hinweis", info),
+		)
+	}
+	clearEntries := func(entries ...*widget.Entry) {
+		for _, e := range entries {
+			e.SetText("")
+		}
+	}
+
 	updateDynamic := func() {
 		var items []fyne.CanvasObject
 		switch cmdSelect.Selected {
@@ -156,16 +181,47 @@ func Run() {
 			items = []fyne.CanvasObject{
 				widget.NewForm(widget.NewFormItem("Zeit", timeEntry)),
 			}
-		case "--setTrain1", "--setTrain2", "--setTrain3":
+		case "--setTrain1":
 			items = []fyne.CanvasObject{
-				widget.NewForm(
-					widget.NewFormItem("Zug-Nr", trainNr),
-					widget.NewFormItem("Zeit", trainTime),
-					widget.NewFormItem("Ziel", trainDest),
-					widget.NewFormItem("Via", trainVia),
-					widget.NewFormItem("Verspätung", trainDelay),
-					widget.NewFormItem("Hinweis", trainInfo),
+				trainForm(train1Nr, train1Time, train1Dest, train1Via, train1Delay, train1Info),
+				widget.NewButton("Felder leeren", func() {
+					clearEntries(train1Nr, train1Time, train1Dest, train1Via, train1Delay, train1Info)
+				}),
+			}
+		case "--setTrain2":
+			items = []fyne.CanvasObject{
+				trainForm(train2Nr, train2Time, train2Dest, train2Via, train2Delay, train2Info),
+				widget.NewButton("Felder leeren", func() {
+					clearEntries(train2Nr, train2Time, train2Dest, train2Via, train2Delay, train2Info)
+				}),
+			}
+		case "--setTrain3":
+			items = []fyne.CanvasObject{
+				trainForm(train3Nr, train3Time, train3Dest, train3Via, train3Delay, train3Info),
+				widget.NewButton("Felder leeren", func() {
+					clearEntries(train3Nr, train3Time, train3Dest, train3Via, train3Delay, train3Info)
+				}),
+			}
+		case "--setAllTrains":
+			makeCol := func(title string, nr, tim, dest, via, delay, info *widget.Entry) fyne.CanvasObject {
+				return container.NewVBox(
+					widget.NewLabelWithStyle(title, fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
+					trainForm(nr, tim, dest, via, delay, info),
+				)
+			}
+			items = []fyne.CanvasObject{
+				container.NewGridWithColumns(3,
+					makeCol("Zug 1", train1Nr, train1Time, train1Dest, train1Via, train1Delay, train1Info),
+					makeCol("Zug 2", train2Nr, train2Time, train2Dest, train2Via, train2Delay, train2Info),
+					makeCol("Zug 3", train3Nr, train3Time, train3Dest, train3Via, train3Delay, train3Info),
 				),
+				widget.NewButton("Alle Felder leeren", func() {
+					clearEntries(
+						train1Nr, train1Time, train1Dest, train1Via, train1Delay, train1Info,
+						train2Nr, train2Time, train2Dest, train2Via, train2Delay, train2Info,
+						train3Nr, train3Time, train3Dest, train3Via, train3Delay, train3Info,
+					)
+				}),
 			}
 		case "--image":
 			items = []fyne.CanvasObject{
@@ -281,7 +337,9 @@ func Run() {
 	leftBottom := container.NewVBox(
 		container.NewHBox(newBtn, deleteBtn),
 		widget.NewSeparator(),
-		widget.NewForm(widget.NewFormItem("Endpoint", endpointEntry)),
+		widget.NewForm(widget.NewFormItem("Endpoint",
+			container.NewBorder(nil, nil, nil, widget.NewLabel("  "), endpointEntry),
+		)),
 		container.NewHBox(saveBtn, testConnBtn),
 		configStatusLabel,
 	)
@@ -290,13 +348,15 @@ func Run() {
 	// ── Right panel: CLI builder ──────────────────────────────────────────────
 	cmdSelect.OnChanged = func(_ string) { updateDynamic() }
 	gleisGroup.OnChanged = func(_ string) { refreshCmd() }
+	fullPathCheck.OnChanged = func(_ bool) { refreshCmd() }
 	timeEntry.OnChanged = func(_ string) { refreshCmd() }
-	trainNr.OnChanged = func(_ string) { refreshCmd() }
-	trainTime.OnChanged = func(_ string) { refreshCmd() }
-	trainDest.OnChanged = func(_ string) { refreshCmd() }
-	trainVia.OnChanged = func(_ string) { refreshCmd() }
-	trainDelay.OnChanged = func(_ string) { refreshCmd() }
-	trainInfo.OnChanged = func(_ string) { refreshCmd() }
+	for _, e := range []*widget.Entry{
+		train1Nr, train1Time, train1Dest, train1Via, train1Delay, train1Info,
+		train2Nr, train2Time, train2Dest, train2Via, train2Delay, train2Info,
+		train3Nr, train3Time, train3Dest, train3Via, train3Delay, train3Info,
+	} {
+		e.OnChanged = func(_ string) { refreshCmd() }
+	}
 	imageFile.OnChanged = func(_ string) { refreshCmd() }
 
 	copyBtn := widget.NewButtonWithIcon("Kopieren", theme.ContentCopyIcon(), func() {
@@ -340,11 +400,13 @@ func Run() {
 		),
 	)
 
+	actionRow := container.NewBorder(nil, nil, fullPathCheck, container.NewHBox(execStatus, executeBtn), nil)
+
 	rightBottom := container.NewVBox(
 		widget.NewSeparator(),
 		widget.NewLabel("Befehl zum Kopieren:"),
 		cmdRow,
-		container.NewHBox(executeBtn, execStatus),
+		actionRow,
 	)
 
 	// Border layout: top and bottom sections are fixed, dynamic fields fill the middle

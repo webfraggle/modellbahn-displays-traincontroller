@@ -17,6 +17,7 @@ OUTDIR="dist"
 
 mkdir -p "$OUTDIR/config"
 cp config/*.json "$OUTDIR/config/"
+cp README.txt "$OUTDIR/README.txt"
 
 ok=0
 skipped=0
