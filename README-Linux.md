@@ -98,20 +98,13 @@ go build -ldflags "-s -w" -o mbd-cli .
 
 ---
 
-## Konfigurationsverzeichnis anlegen
+## Konfiguration anpassen
 
-Die Binärdatei erwartet einen `config/`-Ordner **neben der ausführbaren Datei** mit mindestens einer JSON-Datei:
+Das `config/`-Verzeichnis mit `default.json` ist bereits im Repository enthalten. Passe die IP-Adresse in `config/default.json` auf die deines Zugzielanzeiger-Controllers an:
 
-```bash
-mkdir -p config
-
-# Standardkonfiguration anlegen
-cat > config/default.json <<EOF
+```json
 { "endpoint": "http://192.168.178.155" }
-EOF
 ```
-
-Passe die IP-Adresse auf die deines Zugzielanzeiger-Controllers an.
 
 ---
 
@@ -151,7 +144,7 @@ Passe die IP-Adresse auf die deines Zugzielanzeiger-Controllers an.
 | `GL/gl.h: No such file or directory` | OpenGL-Header fehlen | `sudo apt install libgl1-mesa-dev` |
 | `X11/Xlib.h: No such file or directory` | X11-Header fehlen | `sudo apt install xorg-dev` |
 | `go: command not found` | Go nicht im PATH | `source ~/.bashrc` oder Terminal neu starten |
-| `config/default.json: no such file` | Konfigurationsordner fehlt | `mkdir -p config && echo '{"endpoint":"http://..."}' > config/default.json` |
+| `config/default.json: no such file` | Endpoint-URL fehlt oder falsch | `config/default.json` öffnen und `endpoint` auf die IP des Controllers setzen |
 
 ---
 
