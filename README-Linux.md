@@ -35,22 +35,24 @@ Prüfe zuerst, ob Go bereits installiert ist:
 go version
 ```
 
-Falls nicht vorhanden oder die Version zu alt ist:
+Falls nicht vorhanden oder die Version zu alt ist, **direkt von go.dev laden** (nicht über `apt`):
+
+> Ubuntu/Debian liefern über `apt install golang-go` oft veraltete Versionen. `gccgo-go` ist ein alternativer Compiler und **nicht** der offizielle Go-Compiler — beide apt-Varianten werden nicht empfohlen.
 
 ```bash
-# Aktuelle Version von golang.org herunterladen (Beispiel: 1.22.4)
-wget https://go.dev/dl/go1.22.4.linux-amd64.tar.gz
+# Aktuelle Version von go.dev herunterladen (AMD64 — Beispiel: 1.24.1)
+wget https://go.dev/dl/go1.24.1.linux-amd64.tar.gz
 
 # Alte Installation entfernen und neu entpacken
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.24.1.linux-amd64.tar.gz
 
 # PATH dauerhaft setzen (in ~/.bashrc oder ~/.profile eintragen)
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-> **Hinweis:** Für ARM-Systeme (z. B. Raspberry Pi) die entsprechende `linux-arm64.tar.gz` bzw. `linux-armv6l.tar.gz` von [go.dev/dl](https://go.dev/dl/) verwenden.
+> **ARM-Systeme (z. B. Raspberry Pi):** `linux-arm64.tar.gz` (64-Bit) bzw. `linux-armv6l.tar.gz` (32-Bit) von [go.dev/dl](https://go.dev/dl/) verwenden.
 
 Installationserfolg prüfen:
 ```bash
