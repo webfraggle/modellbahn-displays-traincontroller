@@ -65,13 +65,9 @@ go version
 ## Repository klonen
 
 ```bash
-# Beliebiges Zielverzeichnis wählen, z. B. im Home-Verzeichnis
-mkdir -p ~/projekte
-cd ~/projekte
-
-# Repository klonen
-git clone https://github.com/webfraggle/modellbahn-displays-traincontroller.git mbd-cli
-cd mbd-cli
+# Repository ins Home-Verzeichnis klonen (Ordner "mbd-cli" wird automatisch erstellt)
+git clone https://github.com/webfraggle/modellbahn-displays-traincontroller.git ~/mbd-cli
+cd ~/mbd-cli
 ```
 
 ---
@@ -138,7 +134,7 @@ Passe die IP-Adresse auf die deines Zugzielanzeiger-Controllers an.
 ## Verzeichnisstruktur nach dem Build
 
 ```
-mbd-cli/           ← geklontes Repository
+~/mbd-cli/         ← geklontes Repository
   mbd-cli          ← kompilierte Binärdatei
   config/
     default.json   ← deine Konfiguration
