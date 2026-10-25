@@ -60,6 +60,9 @@ Anderes Display-Profil verwenden:
 Timeout anpassen (Millisekunden):
     mbd-cli.exe --timeout 5000 --next
 
+Version anzeigen:
+    mbd-cli.exe --version
+
 
 FEHLERBEHEBUNG
 --------------
@@ -127,6 +130,9 @@ Use a different display profile:
 
 Adjust timeout (milliseconds):
     mbd-cli.exe --timeout 5000 --next
+
+Show version:
+    mbd-cli.exe --version
 
 
 TROUBLESHOOTING
