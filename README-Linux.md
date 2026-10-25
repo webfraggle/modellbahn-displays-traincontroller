@@ -28,7 +28,7 @@ sudo pacman -S --needed git gcc mesa libx11 libxcursor libxrandr libxinerama lib
 
 ---
 
-### 2. Go 1.21 oder neuer installieren
+### 2. Go 1.26 oder neuer installieren
 
 Prüfe zuerst, ob Go bereits installiert ist:
 ```bash
@@ -40,12 +40,12 @@ Falls nicht vorhanden oder die Version zu alt ist, **direkt von go.dev laden** (
 > Ubuntu/Debian liefern über `apt install golang-go` oft veraltete Versionen. `gccgo-go` ist ein alternativer Compiler und **nicht** der offizielle Go-Compiler — beide apt-Varianten werden nicht empfohlen.
 
 ```bash
-# Aktuelle Version von go.dev herunterladen (AMD64 — Beispiel: 1.24.1)
-wget https://go.dev/dl/go1.24.1.linux-amd64.tar.gz
+# Aktuelle Version von go.dev herunterladen (AMD64 — Beispiel: 1.26.10)
+wget https://go.dev/dl/go1.26.10.linux-amd64.tar.gz
 
 # Alte Installation entfernen und neu entpacken
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf go1.24.1.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.26.10.linux-amd64.tar.gz
 
 # PATH dauerhaft setzen (in ~/.bashrc oder ~/.profile eintragen)
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
@@ -57,7 +57,7 @@ source ~/.bashrc
 Installationserfolg prüfen:
 ```bash
 go version
-# Ausgabe z. B.: go version go1.22.4 linux/amd64
+# Ausgabe z. B.: go version go1.26.10 linux/amd64
 ```
 
 ---

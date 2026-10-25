@@ -12,7 +12,7 @@ The Go implementation is the only active codebase on `main`. The original Node.j
 
 ### Setup
 
-Requires Go 1.21+ and Xcode Command Line Tools (for CGO/Fyne):
+Requires Go 1.26+ and Xcode Command Line Tools (for CGO/Fyne):
 
 ```
 brew install go          # if not installed
@@ -42,6 +42,8 @@ Produces binaries in `dist/`: `mbd-cli-arm64` (native), `mbd-cli-x64` and `mbd-c
 go install github.com/fyne-io/fyne-cross@latest
 go install fyne.io/fyne/v2/cmd/fyne@latest   # ← required, ignore the deprecation notice
 ```
+
+**Go toolchain in fyne-cross:** `go.mod` requires Go 1.26 and pins `toolchain go1.26.10` (patched stdlib; needed by patched `golang.org/x/image` / `x/net`), but the fyne-cross images ship older Go. `build.sh` passes `-env GOTOOLCHAIN=auto` so Go downloads the toolchain inside the container. On the first run this prints "Failed to inject metadata" — the toolchain is cached afterwards; run `./build.sh` again for a clean build.
 
 ### Versioning
 
