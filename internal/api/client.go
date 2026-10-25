@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -92,20 +93,12 @@ func ParseTrain(nr int, s, path string) TrainSlot {
 	}
 }
 
+// splitParts splits s into exactly n fields. The last field keeps any further
+// '|' characters (e.g. encoded Wagenstandsanzeigen in the Hinweis field).
+// Missing fields are returned as empty strings.
 func splitParts(s string, n int) []string {
 	parts := make([]string, n)
-	raw := []byte(s)
-	i := 0
-	for field := 0; field < n; field++ {
-		start := i
-		for i < len(raw) && raw[i] != '|' {
-			i++
-		}
-		parts[field] = string(raw[start:i])
-		if i < len(raw) {
-			i++ // skip '|'
-		}
-	}
+	copy(parts, strings.SplitN(s, "|", n))
 	return parts
 }
 
