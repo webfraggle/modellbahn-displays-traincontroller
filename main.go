@@ -11,6 +11,7 @@ import (
 
 	"github.com/webfraggle/mbd-cli/internal/api"
 	"github.com/webfraggle/mbd-cli/internal/config"
+	"github.com/webfraggle/mbd-cli/internal/console"
 	"github.com/webfraggle/mbd-cli/internal/spawn"
 	"github.com/webfraggle/mbd-cli/internal/ui"
 )
@@ -18,11 +19,12 @@ import (
 func main() {
 	// No args → open config UI
 	if len(os.Args) == 1 {
-		ui.Run()
+		ui.Run(Version)
 		return
 	}
 
 	bg := flag.Bool("bg", false, "")
+	version := flag.Bool("version", false, "")
 	next := flag.Bool("next", false, "")
 	prev := flag.Bool("prev", false, "")
 	setTime := flag.String("setTime", "", "")
@@ -36,6 +38,12 @@ func main() {
 
 	flag.CommandLine.Usage = func() {} // suppress default usage output
 	flag.Parse()
+
+	if *version {
+		console.Attach()
+		fmt.Println("mbd-cli", Version)
+		return
+	}
 
 	// Foreground: spawn detached background copy and exit immediately
 	if !*bg {

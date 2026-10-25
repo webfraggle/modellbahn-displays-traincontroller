@@ -46,9 +46,9 @@ func splitCommandLine(s string) []string {
 	return tokens
 }
 
-func Run() {
+func Run(version string) {
 	a := app.New()
-	w := a.NewWindow("mbd-cli Konfiguration")
+	w := a.NewWindow("mbd-cli Konfiguration " + version)
 	w.Resize(fyne.NewSize(960, 540))
 
 	// ── Exe path variants ─────────────────────────────────────────────────────

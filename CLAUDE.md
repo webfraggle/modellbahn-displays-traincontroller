@@ -43,13 +43,20 @@ go install github.com/fyne-io/fyne-cross@latest
 go install fyne.io/fyne/v2/cmd/fyne@latest   # ← required, ignore the deprecation notice
 ```
 
+### Versioning
+
+The version lives in the `VERSION` file (e.g. `2.0.1-beta2`, without `v`). It is embedded via `go:embed` in `version.go`, shown in the UI window title and printed by `--version`. `build.sh` reads it to name the release ZIP `dist/mbd-cli-v<VERSION>.zip` (only created when all three binaries built). Bump `VERSION` before tagging a release; the git tag should be `v<VERSION>`.
+
 ### Architecture
 
 ```
 main.go                      Entry point: no args → UI, args → spawn+exit
+version.go                   Embeds VERSION → Version
+VERSION                      Single source of truth for the version
 internal/
   spawn/spawn_windows.go     Detach() — Windows: CREATE_NO_WINDOW
   spawn/spawn_unix.go        Detach() — macOS/Linux: Setsid
+  console/console_windows.go Attach() — attach to parent console (--version)
   config/config.go           Load/Save/List/Delete JSON configs
   api/client.go              HTTP client for all REST endpoints
   api/utf8.go                repairUTF8() — Windows-1252 double-encode fix
@@ -71,6 +78,7 @@ The foreground process (called by TrainController) spawns itself with `--bg` app
 - `--gleis A|B` — track selection for dual-track displays (default: `GleisA`)
 - `--conf <name>` — loads `config/<name>.json` instead of `config/default.json`
 - `--timeout <ms>` — HTTP timeout in ms (default: 30000)
+- `--version` — prints the version and exits (no spawn); on Windows attaches to the parent console (`internal/console`) because the GUI-subsystem binary has none
 
 **Config files** live next to the executable in a `config/` subdirectory. During `go run`, falls back to `./config/`. Only required key: `endpoint` (base URL of the display controller).
 

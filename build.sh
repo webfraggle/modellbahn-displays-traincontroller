@@ -14,6 +14,9 @@ export PATH="$HOME/go/bin:$PATH"
 LDFLAGS="-s -w"
 # Note: do not wrap $LDFLAGS in extra quotes when passing to fyne-cross
 OUTDIR="dist"
+# Version is maintained in VERSION (also embedded into the binary via go:embed)
+VERSION="v$(tr -d '[:space:]' < VERSION)"
+echo "mbd-cli $VERSION"
 
 mkdir -p "$OUTDIR/config"
 cp config/*.json "$OUTDIR/config/"
@@ -64,3 +67,16 @@ fi
 
 echo ""
 echo "Done: $ok built, $skipped skipped. Binaries in $OUTDIR/"
+
+# ── Release ZIP (only when all three binaries were built) ────────────────────
+if [ "$ok" -eq 3 ]; then
+    RELNAME="mbd-cli-$VERSION"
+    rm -rf "$OUTDIR/$RELNAME" "$OUTDIR/$RELNAME.zip"
+    mkdir -p "$OUTDIR/$RELNAME/config"
+    cp "$OUTDIR/mbd-cli-arm64" "$OUTDIR/mbd-cli-x64" "$OUTDIR/mbd-cli.exe" "$OUTDIR/README.txt" "$OUTDIR/$RELNAME/"
+    cp config/*.json "$OUTDIR/$RELNAME/config/"
+    (cd "$OUTDIR" && zip -qrX "$RELNAME.zip" "$RELNAME" -x '*.DS_Store')
+    echo "Release ZIP: $OUTDIR/$RELNAME.zip"
+else
+    echo "Release ZIP skipped (not all binaries built)."
+fi
